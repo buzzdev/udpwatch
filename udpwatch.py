@@ -10,8 +10,8 @@ from ConfigParser import ConfigParser
 #######################################################################
 
 # Where to make a log file
-LOGDIR           = "/appl/logs/transcoder/"
-LOGFILE          = LOGDIR + str(datetime.date.today()) + "_udpwatch.log"
+LOGDIR  = "/appl/logs/transcoder/"
+LOGFILE = LOGDIR + str(datetime.date.today()) + "_udpwatch.log"
 
 ########################################################################
 ########################################################################

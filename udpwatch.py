@@ -91,7 +91,7 @@ def kill_pid(pid, channel_name):
   logger.warning("%s Killing PID %s", channel_name, pid)
   os.kill(int(pid), signal.SIGKILL)
 
-def check_output(channel_name, mcast_ip, mcast_port, udp_data_timeout, probe_time):
+def check_udp_output(channel_name, mcast_ip, mcast_port, udp_data_timeout, probe_time):
   logger.debug("Check output started")
 
   PID = get_ffmpeg_pid(mcast_ip, mcast_port)
@@ -158,7 +158,7 @@ def main():
       sys.exit(0)
 
     logger.debug("We have arguments: %s", sys.argv)
-    check_output(str(sys.argv[1]), str(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
+    check_udp_output(str(sys.argv[1]), str(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
 
 ####################################################################
 # MAIN #############################################################

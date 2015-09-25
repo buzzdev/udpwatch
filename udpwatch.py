@@ -10,8 +10,10 @@ from ConfigParser import ConfigParser
 #######################################################################
 
 # Where to make a log file
-LOGDIR  = "/appl/logs/transcoder/"
-LOGFILE = LOGDIR + str(datetime.date.today()) + "_udpwatch.log"
+LOGDIR           = "/appl/logs/transcoder/"
+#LOGFILE          = LOGDIR + str(datetime.date.today()) + "_udpwatch.log"
+#LOGFILE = LOGDIR + "udpwatch_" + str(datetime.date.today()) + ".log"
+LOGFILE = LOGDIR + "udpwatch.log"
 
 ########################################################################
 ########################################################################
@@ -65,7 +67,7 @@ def get_enabled_channels(confdir):
     CHANNELS[NAME] = {
           "NAME":          NAME,
           "PID":           PID,
-          "MCAST_IP":      config.get('General', 'MCAST_OUT_IP'), 
+          "MCAST_IP":      config.get('General', 'MCAST_OUT_IP'),
           "MCAST_PORT":    config.get('General', 'MCAST_OUT_PORT'),
           "INPUT_STREAM":  config.get('General', 'INPUT_STREAM'),
           "VIDEO_BITRATE": config.get('General', 'VIDEO_BITRATE'),

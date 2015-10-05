@@ -43,7 +43,7 @@ def create_udp_socket(ip, port, timeout):
   try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind(('', port))
+    sock.bind((ip, port))
     mreq = struct.pack("=4sl", socket.inet_aton(ip), socket.INADDR_ANY)
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
     sock.settimeout(timeout)
@@ -67,7 +67,7 @@ def get_enabled_channels(confdir):
     CHANNELS[NAME] = {
           "NAME":          NAME,
           "PID":           PID,
-          "MCAST_IP":      config.get('General', 'MCAST_OUT_IP'),
+          "MCAST_IP":      config.get('General', 'MCAST_OUT_IP'), 
           "MCAST_PORT":    config.get('General', 'MCAST_OUT_PORT'),
           "INPUT_STREAM":  config.get('General', 'INPUT_STREAM'),
           "VIDEO_BITRATE": config.get('General', 'VIDEO_BITRATE'),
@@ -93,7 +93,7 @@ def kill_pid(pid, channel_name):
   logger.warning("%s Killing PID %s", channel_name, pid)
   os.kill(int(pid), signal.SIGKILL)
 
-def check_udp_output(channel_name, mcast_ip, mcast_port, udp_data_timeout, probe_time):
+def check_output(channel_name, mcast_ip, mcast_port, udp_data_timeout, probe_time):
   logger.debug("Check output started")
 
   PID = get_ffmpeg_pid(mcast_ip, mcast_port)
@@ -105,11 +105,13 @@ def check_udp_output(channel_name, mcast_ip, mcast_port, udp_data_timeout, probe
     s = create_udp_socket(mcast_ip, mcast_port, udp_data_timeout)
 
     startTime = time.time()
+    bytes = 0
 
     while time.time() - startTime < probe_time:
       try:
         data = False
         data = s.recv(10240)
+        bytes += len(data)
         logger.debug("%s PID %s Received %s bytes on %s:%s", channel_name, PID, len(data), mcast_ip, mcast_port)
         #continue
 
@@ -141,7 +143,8 @@ def check_udp_output(channel_name, mcast_ip, mcast_port, udp_data_timeout, probe
 
     if data != False:
       # if there's UDP data again, let's log NORMAL message
-      logger.normal("%s PID %s is running with %s:%s", channel_name, PID, mcast_ip, mcast_port)
+      logger.normal("%s PID %s received %s bytes on %s:%s", channel_name, PID, bytes, mcast_ip, mcast_port)
+      #logger.normal("%s PID %s is running with %s:%s", channel_name, PID, mcast_ip, mcast_port)
 
   else:
     logger.error("%s %s:%s is not running.", channel_name, mcast_ip, mcast_port)
@@ -160,7 +163,7 @@ def main():
       sys.exit(0)
 
     logger.debug("We have arguments: %s", sys.argv)
-    check_udp_output(str(sys.argv[1]), str(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
+    check_output(str(sys.argv[1]), str(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
 
 ####################################################################
 # MAIN #############################################################
